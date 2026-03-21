@@ -10,7 +10,10 @@ const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
-const DATA_DIR = path.join(__dirname, 'data');
+// En Vercel el filesystem del proyecto es de solo lectura; /tmp es escribible (datos no persistentes entre reinicios).
+const DATA_DIR = process.env.VERCEL
+  ? path.join('/tmp', 'bewash-data')
+  : path.join(__dirname, 'data');
 const REGISTROS_FILE = path.join(DATA_DIR, 'registros.json');
 
 // Solo aceptar JSON en el body; los datos viajan cifrados si usas HTTPS
@@ -81,12 +84,13 @@ function guardarRegistro(registro) {
 // Correo corporativo: misma data que la DB llega aquí para comunicación con el cliente
 const EMAIL_CORPORATIVO = 'Bewashsas1@gmail.com';
 
+/** @returns {Promise<boolean>} true si se envió correo, false si no aplica o falló (el registro igual puede guardarse). */
 async function enviarEmail(datos) {
   const user = process.env.GMAIL_USER;
   const pass = process.env.GMAIL_APP_PASSWORD;
   if (!user || !pass) {
-    console.warn('[EMAIL] Falta GMAIL_USER o GMAIL_APP_PASSWORD en .env - no se envía correo a', EMAIL_CORPORATIVO);
-    throw new Error('Correo no configurado: falta GMAIL_USER o GMAIL_APP_PASSWORD en .env');
+    console.warn('[EMAIL] Falta GMAIL_USER o GMAIL_APP_PASSWORD - no se envía correo a', EMAIL_CORPORATIVO);
+    return false;
   }
   const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -116,9 +120,10 @@ Responder desde Bewashsas1@gmail.com para gestionar la comunicación con el clie
       text: texto
     });
     console.log('[EMAIL] Correo enviado correctamente a', EMAIL_CORPORATIVO, '- Asunto:', datos.nombreCompleto);
+    return true;
   } catch (err) {
     console.error('[EMAIL] Error al enviar:', err.message);
-    throw err;
+    return false;
   }
 }
 
@@ -146,8 +151,13 @@ app.post('/api/registro', async (req, res) => {
       terminos: true
     };
     guardarRegistro(registro);
-    await enviarEmail(registro);
-    res.json({ ok: true, mensaje: 'Registro guardado. Te contactaremos pronto.' });
+    const emailOk = await enviarEmail(registro);
+    res.json({
+      ok: true,
+      mensaje: emailOk
+        ? 'Registro guardado. Te contactaremos pronto.'
+        : 'Registro guardado. Te contactaremos pronto. (Notificación por correo no enviada: configura GMAIL_USER y GMAIL_APP_PASSWORD en Vercel.)'
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ ok: false, error: 'Error al procesar el registro' });
@@ -163,8 +173,12 @@ app.get('/api/admin/registros', (req, res) => {
   res.json(leerRegistros());
 });
 
-app.listen(PORT, () => {
-  console.log(`BeWash: servidor en http://localhost:${PORT}`);
-  console.log(`Página: http://localhost:${PORT}`);
-  console.log(`Registros guardados en: ${REGISTROS_FILE}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`BeWash: servidor en http://localhost:${PORT}`);
+    console.log(`Página: http://localhost:${PORT}`);
+    console.log(`Registros guardados en: ${REGISTROS_FILE}`);
+  });
+}
+
+module.exports = app;
