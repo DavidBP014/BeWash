@@ -165,22 +165,18 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+    background: var(--primary-dark) url('../img/Imagen%20Fondo.jpeg') center center / cover no-repeat;
     color: var(--white);
     margin-top: 70px;
     overflow: hidden;
 }
 
-.hero::before {
-    content: '';
+.hero-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="rgba(255,255,255,0.1)"/></svg>') no-repeat center;
-    background-size: cover;
-    opacity: 0.3;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 107, 90, 0.72) 0%, rgba(0, 60, 55, 0.65) 100%);
+    z-index: 1;
+    pointer-events: none;
 }
 
 .hero-content {
@@ -240,6 +236,7 @@ body {
     right: 0;
     height: 120px;
     color: var(--gray-100);
+    z-index: 2;
 }
 
 .wave-bottom svg {
@@ -262,14 +259,32 @@ body {
 }
 
 .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
     background: var(--white);
     color: var(--primary-color);
+    position: relative;
+}
+
+.btn-primary::before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    background: url('../img/BOTON.jpeg') center center / contain no-repeat;
+    border-radius: 6px;
 }
 
 .btn-primary:hover {
     background: var(--gray-200);
     transform: translateY(-3px);
     box-shadow: var(--shadow-lg);
+}
+
+.btn-primary:hover::before {
+    filter: brightness(0.98);
 }
 
 .btn-secondary {
@@ -282,6 +297,28 @@ body {
     background: var(--white);
     color: var(--primary-color);
     transform: translateY(-3px);
+}
+
+/* Icono marca (BOTON.jpeg) en CTA del hero */
+.hero .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
+}
+
+.hero .btn-secondary::before {
+    content: '';
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+    background: url('../img/BOTON.jpeg') center center / contain no-repeat;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+.hero .btn-secondary:hover::before {
+    filter: brightness(1.05);
 }
 
 .btn-block {
@@ -324,12 +361,24 @@ section {
     background: var(--light-color);
 }
 
+.instagram-section--after-contact {
+    padding-top: 4rem;
+    padding-bottom: 3rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
 .instagram-franquicia-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
     align-items: start;
     justify-items: center;
+}
+
+@media (max-width: 1100px) {
+    .instagram-franquicia-content {
+        grid-template-columns: 1fr;
+    }
 }
 
 .instagram-content {
@@ -410,6 +459,83 @@ section {
     color: currentColor;
 }
 
+/* Tarjeta WhatsApp (misma estructura que Instagram) */
+.whatsapp-card {
+    background: var(--white);
+    padding: 3rem;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 500px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    box-shadow: var(--shadow-lg);
+    transition: var(--transition);
+}
+
+.whatsapp-card:hover {
+    transform: translateY(-5px);
+}
+
+.whatsapp-icon-wrap {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.whatsapp-icon-wrap .icon-whatsapp {
+    width: 64px;
+    height: 64px;
+    color: #25d366;
+}
+
+.whatsapp-card h3 {
+    font-size: 2rem;
+    color: #128c7e;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.whatsapp-card p {
+    color: var(--text-light);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.btn-whatsapp {
+    background: linear-gradient(135deg, #25d366 0%, #128c7e 50%, #075e54 100%);
+    color: var(--white);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-whatsapp:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
+    color: var(--white);
+}
+
+.whatsapp-logo {
+    display: inline-flex;
+    align-items: center;
+}
+
+.whatsapp-logo .icon-whatsapp-sm {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: currentColor;
+}
+
 /* Mensualidad Section */
 .mensualidad {
     background: var(--white);
@@ -435,6 +561,8 @@ section {
     box-shadow: var(--shadow-lg);
     overflow: hidden;
     position: relative;
+    display: flex;
+    flex-direction: column;
 }
 
 .plan-header {
@@ -471,6 +599,15 @@ section {
 .plan-features {
     padding: 1rem 2rem;
     color: var(--white);
+    flex: 1;
+}
+
+.plan-card-footer {
+    padding: 0.5rem 1.5rem 1.75rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .feature-item {
@@ -495,18 +632,27 @@ section {
 }
 
 .btn-plan {
-    margin: 2rem auto;
+    margin: 0;
     background: var(--white);
     color: var(--primary-color);
     font-weight: 700;
     font-size: 1.1rem;
-    padding: 1rem 2rem;
+    padding: 1rem 2.25rem;
     border-radius: 25px;
     text-decoration: none;
     display: block;
     width: fit-content;
+    max-width: 100%;
     text-align: center;
     transition: var(--transition);
+    box-sizing: border-box;
+}
+
+.btn-plan.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.55rem;
 }
 
 .btn-plan:hover {
@@ -658,6 +804,12 @@ section {
     align-items: center;
 }
 
+.nosotros-text {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
 .nosotros-text h2 {
     margin-bottom: 1.5rem;
 }
@@ -665,6 +817,12 @@ section {
 .nosotros-text p {
     color: var(--text-light);
     margin-bottom: 1rem;
+}
+
+/* Botón CTA siempre centrado respecto al bloque de texto */
+.nosotros-text > .btn {
+    align-self: center;
+    margin-top: 0.5rem;
 }
 
 .nosotros-stats {
@@ -728,13 +886,16 @@ section {
     position: relative;
     overflow: hidden;
     border-radius: 15px;
-    aspect-ratio: 4/3;
+    aspect-ratio: 1;
+    min-height: 220px;
+    background: var(--gray-200);
 }
 
 .galeria-img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     display: block;
     transition: var(--transition);
 }
@@ -773,9 +934,9 @@ section {
 }
 
 .contacto-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    display: block;
+    max-width: 560px;
+    margin: 0 auto;
 }
 
 .contacto-info {
@@ -957,13 +1118,29 @@ section {
         font-size: 2rem;
     }
 
-    .nosotros-content,
-    .contacto-content {
+    .nosotros-content {
         grid-template-columns: 1fr;
+    }
+
+    .nosotros-text {
+        align-items: center;
+        text-align: center;
+    }
+
+    .nosotros-text p {
+        text-align: center;
     }
 
     .nosotros-stats {
         grid-template-columns: 1fr;
+        width: 100%;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .nosotros-text > .btn {
+        align-self: center;
     }
 
     .instagram-franquicia-content {
@@ -977,6 +1154,7 @@ section {
     }
 
     .instagram-card,
+    .whatsapp-card,
     .franquicia-card {
         padding: 2rem;
         margin-left: auto;
@@ -1023,6 +1201,7 @@ section {
     }
 
     .instagram-card,
+    .whatsapp-card,
     .contacto-form {
         padding: 1.5rem;
     }
