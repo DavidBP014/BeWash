@@ -487,7 +487,7 @@ app.post('/api/admin/enviar-notificacion-cliente', adminJwtMiddleware, async (re
     const text = textoPlanoNotificacion(dest, base);
     const mailResult = await enviarCorreoHtml({
       to: dest,
-      subject: 'BeWash — Información sobre nuestro servicio',
+      subject: 'Be Wash — Bono mensual: 1.er, 2.º y 3.er uso (un solo correo)',
       text,
       html
     });
